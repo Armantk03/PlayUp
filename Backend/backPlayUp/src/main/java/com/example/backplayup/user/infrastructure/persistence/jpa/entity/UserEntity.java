@@ -1,11 +1,14 @@
 package com.example.backplayup.user.infrastructure.persistence.jpa.entity;
 
+import com.example.backplayup.event.infrastructure.persistence.jpa.entity.EventEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -34,5 +37,12 @@ public class UserEntity {
 
     @Column(nullable = false)
     private String language;
+
+    @OneToMany(
+            mappedBy = "creator",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<EventEntity> events = new ArrayList<>();
 }
 
