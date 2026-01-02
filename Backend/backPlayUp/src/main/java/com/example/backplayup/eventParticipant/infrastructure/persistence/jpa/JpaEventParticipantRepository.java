@@ -1,7 +1,7 @@
-package com.example.backplayup.infrastructure.persistence.jpa;
+package com.example.backplayup.eventParticipant.infrastructure.persistence.jpa;
 
 
-import com.example.backplayup.infrastructure.persistence.jpa.entity.EventParticipantEntity;
+import com.example.backplayup.eventParticipant.infrastructure.persistence.jpa.entity.EventParticipantEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

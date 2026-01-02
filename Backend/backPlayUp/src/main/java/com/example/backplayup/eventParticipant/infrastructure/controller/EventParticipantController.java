@@ -1,4 +1,4 @@
-package com.example.backplayup.infrastructure.controller;
+package com.example.backplayup.eventParticipant.infrastructure.controller;
 
 import com.example.backplayup.eventParticipant.domain.model.EventParticipant;
 import com.example.backplayup.eventParticipant.domain.port.in.EventParticipantUseCase;

@@ -1,4 +1,4 @@
-package com.example.backplayup.infrastructure.persistence.jpa.entity;
+package com.example.backplayup.eventParticipant.infrastructure.persistence.jpa.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;

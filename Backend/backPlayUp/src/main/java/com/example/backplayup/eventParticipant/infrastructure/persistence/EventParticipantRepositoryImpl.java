@@ -1,9 +1,9 @@
-package com.example.backplayup.infrastructure.persistence;
+package com.example.backplayup.eventParticipant.infrastructure.persistence;
 
 import com.example.backplayup.eventParticipant.domain.model.EventParticipant;
 import com.example.backplayup.eventParticipant.domain.port.out.EventParticipantRepository;
-import com.example.backplayup.infrastructure.persistence.jpa.JpaEventParticipantRepository;
-import com.example.backplayup.infrastructure.persistence.jpa.entity.EventParticipantEntity;
+import com.example.backplayup.eventParticipant.infrastructure.persistence.jpa.JpaEventParticipantRepository;
+import com.example.backplayup.eventParticipant.infrastructure.persistence.jpa.entity.EventParticipantEntity;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Component;
 
