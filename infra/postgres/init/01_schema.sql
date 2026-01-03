@@ -62,3 +62,35 @@ CREATE TABLE event_participants (
 
     CONSTRAINT uk_event_user UNIQUE (event_id, user_id)
 );
+-- =========================
+-- MISSIONS
+-- =========================
+CREATE TABLE missions (
+    id BIGSERIAL PRIMARY KEY,
+    title VARCHAR(150) NOT NULL,
+    description TEXT,
+    points INT NOT NULL,
+    active BOOLEAN NOT NULL DEFAULT TRUE
+);
+
+-- =========================
+-- USER MISSIONS
+-- =========================
+CREATE TABLE user_missions (
+    id BIGSERIAL PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    mission_id BIGINT NOT NULL,
+    completed BOOLEAN NOT NULL DEFAULT FALSE,
+
+    CONSTRAINT fk_user_mission_user
+        FOREIGN KEY (user_id)
+        REFERENCES users(id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_user_mission_mission
+        FOREIGN KEY (mission_id)
+        REFERENCES missions(id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT uk_user_mission UNIQUE (user_id, mission_id)
+);
