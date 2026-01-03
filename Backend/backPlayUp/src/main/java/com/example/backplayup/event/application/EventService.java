@@ -36,4 +36,9 @@ public class EventService implements EventUseCase {
     public List<Event> getAllEvents() {
         return repository.findAllEvents();
     }
+
+    @Override
+    public void finishEvent(Long eventId, Long userId) {
+        repository.finishEvent(eventId, userId);
+    }
 }

@@ -14,4 +14,6 @@ public interface EventUseCase {
     Optional<Event> getEventById(Long id);
 
     List<Event> getAllEvents();
+
+    void finishEvent(Long eventId, Long userId);
 }

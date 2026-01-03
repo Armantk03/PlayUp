@@ -8,10 +8,9 @@ import java.util.Optional;
 public interface EventRepository {
 
     Event save(Event event, Long creatorUserId);
-
     Event update(Long id, Event event);
-
     Optional<Event> findEventById(Long id);
-
     List<Event> findAllEvents();
+
+    void finishEvent(Long eventId, Long userId);
 }

@@ -1,5 +1,6 @@
 package com.example.backplayup.user.infrastructure.persistence;
 
+import com.example.backplayup.auth.domain.port.out.AuthRepository;
 import com.example.backplayup.user.domain.model.User;
 import com.example.backplayup.user.domain.port.out.UserRepository;
 import com.example.backplayup.user.infrastructure.persistence.jpa.JpaUserRepository;
@@ -11,22 +12,26 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
 @Component
 public class UserRepositoryImpl implements UserRepository {
 
 
-    private JpaUserRepository jpa;
-    private UserMapper mapper;
+    private final JpaUserRepository jpa;
+    private final UserMapper mapper;
+    private final AuthRepository authRepo;
 
-    public UserRepositoryImpl(JpaUserRepository jpa, UserMapper mapper) {
+    public UserRepositoryImpl(JpaUserRepository jpa, UserMapper mapper, AuthRepository authRepo) {
         this.jpa = jpa;
         this.mapper = mapper;
+        this.authRepo = authRepo;
     }
 
     @Transactional
     @Override
-    public User createUser(String name, String email, String language) {
+    public User createUser(String name, String email, String language, String password) {
 
         User user = new User();
         if (jpa.existsByEmail(email)) {
@@ -48,10 +53,41 @@ public class UserRepositoryImpl implements UserRepository {
 
         UserEntity entity = mapper.toEntity(user);
         UserEntity saved = jpa.save(entity);
+        authRepo.register(saved.getId(),password);
+
 
         return mapper.toDomain(saved);
 
 
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<User> getRanking() {
+        return jpa.findAll()
+                .stream()
+                .sorted(
+                        Comparator
+                                .comparingInt(UserEntity::getPuntos).reversed()
+                                .thenComparingInt(UserEntity::getNivel).reversed()
+                )
+                .map(mapper::toDomain)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<User> getTopRanking(int limit) {
+        return jpa.findAll()
+                .stream()
+                .sorted(
+                        Comparator
+                                .comparingInt(UserEntity::getPuntos).reversed()
+                                .thenComparingInt(UserEntity::getNivel).reversed()
+                )
+                .limit(limit)
+                .map(mapper::toDomain)
+                .toList();
     }
 
 

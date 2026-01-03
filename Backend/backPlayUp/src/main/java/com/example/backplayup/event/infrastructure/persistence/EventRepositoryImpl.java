@@ -5,6 +5,8 @@ import com.example.backplayup.event.domain.port.out.EventRepository;
 import com.example.backplayup.event.infrastructure.persistence.jpa.JpaEventRepository;
 import com.example.backplayup.event.infrastructure.persistence.jpa.entity.EventEntity;
 import com.example.backplayup.event.infrastructure.persistence.jpa.mapper.EventMapper;
+import com.example.backplayup.eventParticipant.domain.port.out.EventParticipantRepository;
+import com.example.backplayup.user.domain.port.out.UserRepository;
 import com.example.backplayup.user.infrastructure.persistence.jpa.JpaUserRepository;
 import com.example.backplayup.user.infrastructure.persistence.jpa.entity.UserEntity;
 import org.springframework.stereotype.Component;
@@ -18,15 +20,21 @@ public class EventRepositoryImpl implements EventRepository {
 
     private final JpaEventRepository jpaEvent;
     private final JpaUserRepository jpaUser;
+    private final EventParticipantRepository eventParticipantRepository;
+    private final UserRepository userRepository;
     private final EventMapper mapper;
 
     public EventRepositoryImpl(
             JpaEventRepository jpaEvent,
             JpaUserRepository jpaUser,
+            EventParticipantRepository eventParticipantRepository,
+            UserRepository userRepository,
             EventMapper mapper
     ) {
         this.jpaEvent = jpaEvent;
         this.jpaUser = jpaUser;
+        this.eventParticipantRepository = eventParticipantRepository;
+        this.userRepository = userRepository;
         this.mapper = mapper;
     }
 
@@ -39,8 +47,10 @@ public class EventRepositoryImpl implements EventRepository {
 
         EventEntity entity = mapper.toEntity(event);
 
+
+        entity.setId(null);
+
         entity.setCreator(creator);
-        creator.getEvents().add(entity);
 
         return mapper.toDomain(jpaEvent.save(entity));
     }
@@ -68,5 +78,33 @@ public class EventRepositoryImpl implements EventRepository {
     @Override
     public List<Event> findAllEvents() {
         return jpaEvent.findAll().stream().map(mapper::toDomain).toList();
+    }
+
+    @Transactional
+    @Override
+    public void finishEvent(Long eventId, Long userId) {
+
+        EventEntity event = jpaEvent.findById(eventId)
+                .orElseThrow(() -> new IllegalArgumentException("Evento no existe"));
+
+        if (event.isFinished()) {
+            throw new IllegalStateException("Evento ya finalizado");
+        }
+
+        if (!event.getCreator().getId().equals(userId)) {
+            throw new IllegalArgumentException("No eres el creador del evento");
+        }
+
+        int points = event.getPoints();
+
+        List<Long> participants =
+                eventParticipantRepository.getParticipants(eventId);
+
+        for (Long participantId : participants) {
+            userRepository.addPoints(participantId, points);
+        }
+
+        event.setFinished(true);
+        jpaEvent.save(event);
     }
 }

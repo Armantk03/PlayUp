@@ -2,15 +2,17 @@ package com.example.backplayup.user.application;
 
 import com.example.backplayup.user.domain.model.User;
 import com.example.backplayup.user.domain.port.in.UserUseCase;
+import com.example.backplayup.user.domain.port.out.UserRepository;
 import com.example.backplayup.user.infrastructure.persistence.UserRepositoryImpl;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
 public class UserService implements UserUseCase {
 
-    UserRepositoryImpl repo;
+    UserRepository repo;
 
     public UserService(UserRepositoryImpl repo) {
         this.repo = repo;
@@ -18,8 +20,8 @@ public class UserService implements UserUseCase {
 
 
     @Override
-    public User create(String nombre, String email, String language) {
-        return repo.createUser(nombre,email,language);
+    public User create(String nombre, String email, String language,String password) {
+        return repo.createUser(nombre,email,language,password);
     }
 
     @Override
@@ -41,4 +43,15 @@ public class UserService implements UserUseCase {
     public void deleteUser(Long id) {
         repo.deleteById(id);
     }
+
+    @Override
+    public List<User> getRanking() {
+        return repo.getRanking();
+    }
+
+    @Override
+    public List<User> getTopRanking(int limit) {
+        return repo.getTopRanking(limit);
+    }
+
 }

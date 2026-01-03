@@ -27,7 +27,10 @@ public class EventEntity {
     @Column(nullable = false)
     private int points;
 
+    @Column(nullable = false)
+    private boolean finished = false;
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "creator_user_id", nullable = false)
     private UserEntity creator;
 }
